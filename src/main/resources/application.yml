@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: myshop
+
+  datasource:
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/shop}
+  jpa:
+    hibernate:
+      ddl-auto: validate
