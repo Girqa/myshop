@@ -28,6 +28,10 @@ public class Bucket extends BaseEntity {
     return Collections.unmodifiableList(products);
   }
 
+  public void clear() {
+    products.clear();
+  }
+
   public void increaseProduct(Long id) {
     for (ProductAmount productAmount : products) {
       if (id.equals(productAmount.getProduct().getId())) {

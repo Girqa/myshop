@@ -21,10 +21,10 @@ import org.apache.commons.lang3.builder.ToStringExclude;
 @Table(name = "products")
 @Getter
 @Setter
-@Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(toBuilder = true)
 public class Product extends BaseEntity {
 
   @Size(min = 1)
