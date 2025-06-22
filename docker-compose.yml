@@ -1,0 +1,42 @@
+services:
+  myshop:
+    container_name: shop
+    restart: on-failure
+    build: .
+    ports:
+      - "8080:8080"
+      - "8000:8000"
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/shop
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+    networks:
+      - shop-net
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgres
+    image: postgres:16-alpine
+    restart: on-failure
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shop
+    ports:
+      - "5433:5432"
+    networks:
+      - shop-net
+    volumes:
+      - postgres-data:/var/lib/posgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-d", "postgres", "-U", "postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  postgres-data:
+networks:
+  shop-net:
