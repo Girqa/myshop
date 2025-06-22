@@ -41,6 +41,10 @@ public class OrderProduct extends BaseEntity {
   @Column(name = "order_product_price", nullable = false, updatable = false)
   private BigDecimal price;
 
+  @Positive
+  @Column(name = "order_product_amount", nullable = false, updatable = false)
+  private int amount;
+
   @ToStringExclude
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "order_product_image", updatable = false)

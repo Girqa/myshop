@@ -68,6 +68,7 @@ create table orders_products
     order_product_description text          not null,
     order_product_price       decimal(7, 2) not null,
     order_product_image       bigint        not null,
+    order_product_amount      int4          not null,
 
     constraint order_products_pk primary key (id),
     constraint order_products_fk foreign key (order_id)
