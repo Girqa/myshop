@@ -3,6 +3,7 @@ package ru.girqa.myshop.model.domain;
 import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.PageRequest;
@@ -10,9 +11,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import ru.girqa.myshop.model.domain.search.SearchCriteria;
+import ru.girqa.myshop.model.domain.sort.ProductSort;
 
 @Getter
 @Builder
+@AllArgsConstructor
 public class ProductPageRequest {
 
   private final int page;
@@ -23,7 +26,7 @@ public class ProductPageRequest {
   private List<SearchCriteria<Product>> filters = new ArrayList<>();
 
   @Builder.Default
-  private List<Sort.Order> sorts = new ArrayList<>();
+  private List<ProductSort> sorts = new ArrayList<>();
 
   public Specification<Product> toSpecification() {
     return (root, query, cb) -> {
@@ -44,7 +47,13 @@ public class ProductPageRequest {
     if (sorts.isEmpty()) {
       return PageRequest.of(page, pageSize);
     } else {
-      return PageRequest.of(page, pageSize, Sort.by(sorts));
+      List<Sort.Order> sortOrders = sorts.stream()
+          .map(s -> switch (s.direction().getDirection()) {
+            case ASC -> Sort.Order.asc(s.param().getFieldName());
+            case DESC -> Sort.Order.desc(s.param().getFieldName());
+          })
+          .toList();
+      return PageRequest.of(page, pageSize, Sort.by(sortOrders));
     }
   }
 }

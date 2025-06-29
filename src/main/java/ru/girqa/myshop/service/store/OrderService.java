@@ -48,6 +48,8 @@ public class OrderService {
         .products(products)
         .build();
 
+    products.forEach(p -> p.setOrder(order));
+
     return orderRepository.save(order);
   }
 

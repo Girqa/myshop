@@ -1,5 +1,6 @@
 package ru.girqa.myshop.model.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -8,6 +9,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -29,9 +31,10 @@ public class Order extends BaseEntity {
   @Column(name = "order_price", nullable = false)
   private BigDecimal price;
 
-  @OneToMany(fetch = FetchType.LAZY)
+  @Builder.Default
+  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
   @JoinColumn(name = "order_id")
-  private List<OrderProduct> products;
+  private List<OrderProduct> products = new ArrayList<>();
 
   @CreationTimestamp
   @Column(name = "order_created_at", nullable = false, updatable = false)

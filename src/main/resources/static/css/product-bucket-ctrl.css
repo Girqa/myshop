@@ -1,0 +1,14 @@
+.card-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+}
+
+.increment-amount::before {
+  content: '▶'
+}
+
+.decrement-amount::before {
+  content: '◀';
+}

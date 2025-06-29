@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link th:href="@{/static/css/product-bucket-ctrl.css}" rel="stylesheet"/>
+  <script th:src="@{/static/js/products-bucket-ctrl.js}"></script>
+</head>
+<body>
+
+<article th:fragment="productPreview(
+  productId, imageId, bucketId, name, price, countInBucket
+)">
+  <div class="card h-100">
+    <img class="card-img-top p-2"
+         style="height: 300px; object-position: center"
+         th:alt="${name}"
+         th:src="@{/api/v1/image/{id}(id=${imageId})}"/>
+
+    <a th:href="@{/product/{id}(id=${productId})}" style="text-decoration: none">
+      <div class="card-body">
+        <h5 class="card-title" th:text="${name}"></h5>
+
+        <p class="card-subtitle text-center" th:text="'Цена:' + ${price} + 'Р' "></p>
+      </div>
+    </a>
+
+    <div th:replace="~{fragments/product-footer :: productFooter(${productId}, ${bucketId}, ${countInBucket})}"></div>
+  </div>
+</article>
+
+</body>
+</html>

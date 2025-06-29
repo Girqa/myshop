@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Просмотр товаров</title>
+  <link th:href="@{/webjars/bootstrap/5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet"/>
+  <link th:href="@{/static/css/product-bucket-ctrl.css}" rel="stylesheet"/>
+  <script th:src="@{/static/js/products-bucket-ctrl.js}"></script>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h3 class="text-center">Товары</h3>
+
+<div class="container-lg mb-4 mt-4 d-flex justify-content-lg-between">
+  <div class="d-flex">
+    <div class="block me-3">
+      <form class="d-flex justify-content-lg-between"
+            th:action="@{/}" th:object="${pageRequest}" method="get">
+        <input type="hidden" th:field="*{nameSort}"/>
+        <input type="hidden" th:field="*{priceSort}"/>
+        <input type="hidden" th:field="*{page}"/>
+        <input type="hidden" th:field="*{pageSize}"/>
+        <input class="form-control" type="text" name="searchName"
+               placeholder="Название поста" th:with="searchName=${pageRequest.getSearchName()}"
+               th:value="${searchName == null ? '' : searchName}"
+               th:field="*{searchName}"/>
+      </form>
+    </div>
+
+    <div class="block me-3 d-flex justify-content-lg-between">
+      <form th:action="@{/}" th:object="${pageRequest}" method="get">
+        <input type="hidden" th:field="*{searchName}"/>
+        <input type="hidden" th:field="*{priceSort}"/>
+        <input type="hidden" th:field="*{page}"/>
+        <input type="hidden" th:field="*{pageSize}"/>
+        <input type="hidden" name="nameSort"
+               th:value="${pageRequest.nameSort == null ? 'ASC' :
+                   (pageRequest.nameSort.name() == 'ASC' ? 'DESC' : '')}"/>
+
+        <button class="btn btn-light" type="submit">
+          Название
+          <span th:text="${pageRequest.nameSort == null ? '⇅' :
+                   (pageRequest.nameSort.name() == 'ASC' ? '↓' : '↑')}"></span>
+        </button>
+      </form>
+      <form th:action="@{/}" th:object="${pageRequest}" method="get">
+        <input type="hidden" th:field="*{searchName}"/>
+        <input type="hidden" th:field="*{nameSort}"/>
+        <input type="hidden" th:field="*{page}"/>
+        <input type="hidden" th:field="*{pageSize}"/>
+        <input type="hidden" name="priceSort"
+               th:value="${pageRequest.priceSort == null ? 'ASC' :
+                   (pageRequest.priceSort.name() == 'ASC' ? 'DESC' : '')}"/>
+
+        <button class="btn btn-light" type="submit">
+          Цена
+          <span th:text="${pageRequest.priceSort == null ? '⇅' :
+                   (pageRequest.priceSort.name() == 'ASC' ? '↓' : '↑')}"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="block">
+    <a th:href="@{/(page=${pageRequest.page - 1}, pageSize=${pageRequest.pageSize},
+                           searchName=${pageRequest.searchName}, nameSort=${pageRequest.nameSort},
+                           priceSort=${pageRequest.priceSort})}"
+       th:class="'btn btn-primary ' + (${pageRequest.page == 1 ? 'disabled' : ''})">
+      <span>←</span>
+    </a>
+    <div class="btn btn-primary" th:text="${pageRequest.page} + '/' + ${totalPages}"></div>
+    <a th:href="@{/(page=${pageRequest.page + 1}, pageSize=${pageRequest.pageSize},
+                    searchName=${pageRequest.searchName}, nameSort=${pageRequest.nameSort},
+                    priceSort=${pageRequest.priceSort})}"
+       th:class="'btn btn-primary ' + (${pageRequest.page < totalPages ? '' : 'disabled'})">
+      <span>→</span>
+    </a>
+  </div>
+
+  <div class="block">
+    <form method="get" th:action="@{/}" th:object="${pageRequest}">
+      <input type="hidden" th:field="*{page}"/>
+      <input type="hidden" th:field="*{searchName}"/>
+      <input type="hidden" th:field="*{nameSort}"/>
+      <input type="hidden" th:field="*{priceSort}"/>
+      <select class="form-select" name="pageSize" onchange="this.form.submit()">
+        <option th:each="size: ${availablePageSizes}"
+                th:value="${size}"
+                th:text="${size}"
+                th:selected="${size == pageRequest.pageSize}"></option>
+      </select>
+    </form>
+  </div>
+
+  <div class="block">
+    <button type="button"
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#createProduct">
+      Создать товар
+    </button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row row-cols-4">
+    <div class="col mb-4" th:each="product : ${products}">
+      <div th:replace="~{fragments/product-preview :: productPreview(
+      ${product.id()}, ${product.imageId()},
+      ${bucketId}, ${product.name()},
+      ${product.price()}, ${product.countInBucket()}
+    )}"></div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/product-modal :: createProduct}"></div>
+<script th:src="@{/webjars/bootstrap/5.3.0/dist/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

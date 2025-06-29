@@ -50,4 +50,7 @@ public class OrderProduct extends BaseEntity {
   @JoinColumn(name = "order_product_image", updatable = false)
   private Image image;
 
+  @JoinColumn(name = "order_id", updatable = false)
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Order order;
 }
