@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link th:href="@{/static/css/product-bucket-ctrl.css}" rel="stylesheet"/>
+  <script th:src="@{/static/js/products-bucket-ctrl.js}"></script>
+</head>
+<body>
+
+<div th:fragment="productFooter(productId, bucketId, countInBucket)" class="card-footer">
+  <div th:style="${countInBucket == null ? 'display: block' : 'display: none'}"
+       th:id="|product-${productId}-controls-put|">
+    <button class="btn btn-primary"
+            th:onclick="|putProductInBucket(${bucketId}, ${productId})|">
+      Добавить в корзину
+    </button>
+  </div>
+
+  <div th:style="${countInBucket != null ? 'display: flex' : 'display: none'}"
+       th:id="|product-${productId}-controls-change|"
+       class="align-items-center gap-2 add-to-bucket">
+
+    <div class="me-2">
+      <small class="h5">В корзине: </small>
+    </div>
+
+    <button class="decrement-amount"
+            th:data-amount-in-bucket="${countInBucket}"
+            th:onclick="|decrementBucket(${bucketId}, ${productId})|"></button>
+
+    <small class="counter fw-bold text-center"
+           style="width: 30px"
+           th:text="${countInBucket}"></small>
+
+    <button class="increment-amount"
+            th:data-amount-in-bucket="${countInBucket}"
+            th:onclick="|incrementBucket(${bucketId}, ${productId})|"></button>
+  </div>
+</div>
+
+</body>
+</html>

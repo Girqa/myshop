@@ -1,13 +1,14 @@
 package ru.girqa.myshop.model.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,11 +28,11 @@ import org.apache.commons.lang3.builder.ToStringExclude;
 @Builder(toBuilder = true)
 public class Product extends BaseEntity {
 
-  @Size(min = 1)
+  @NotBlank
   @Column(name = "product_name", nullable = false)
   private String name;
 
-  @Size(min = 1)
+  @NotBlank
   @Column(name = "product_description", nullable = false)
   private String description;
 
@@ -39,7 +40,7 @@ public class Product extends BaseEntity {
   @Column(name = "product_price", nullable = false)
   private BigDecimal price;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
   @JoinColumn(name = "product_image")
   @ToStringExclude
   private Image image;

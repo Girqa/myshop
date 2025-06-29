@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+
+<div th:fragment="createProduct">
+  <div class="modal fade"
+       id="createProduct"
+       tabindex="-1"
+       aria-labelledby="createProductLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form action="#" th:action="@{/product}" method="post"
+              enctype="multipart/form-data">
+          <div class="modal-header">
+            <h5 class="modal-title" id="createProductLabel">
+              <span>Создание товара</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Закрыть"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="name" class="form-label">Наименование</label>
+              <input type="text" class="form-control" id="name"
+                     name="name" required="required"
+                     placeholder="Введите название товара"
+              />
+              <div class="invalid-feedback">
+                Введите название
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="image" class="form-label">Изображение</label>
+              <input class="form-control" id="image"
+                     accept="image/*" type="file"
+                     name="image" required="required"/>
+              <small class="form-text text-muted">
+                Максимальный размер файла: 5MB
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label for="description" class="form-label">Описание</label>
+              <textarea class="form-control" id="description"
+                        rows="8" required="required" type="text"
+                        name="description"
+                        placeholder="Напишите описание товара"
+              ></textarea>
+              <div class="invalid-feedback">
+                Пожалуйста, введите описание товара
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="price" class="form-label">Цена</label>
+              <input class="form-control" id="price"
+                     type="text" pattern="^\d{1,7}(\.\d{2})?$"
+                     name="price" required="required"
+                      placeholder="Цена в формате XX.XX">
+              <div class="invalid-feedback">
+                Пожалуйста, введите цену в формате: до 7 цифр в целой части и 2 знака после запятой
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">
+              <span>Создать товар</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

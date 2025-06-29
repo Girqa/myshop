@@ -11,6 +11,7 @@ import ru.girqa.myshop.model.domain.ProductAmount;
 public interface OrderProductMapper {
 
 
+  @Mapping(target = "order", ignore = true)
   @Mapping(target = "price", source = "product.price")
   @Mapping(target = "name", source = "product.name")
   @Mapping(target = "image", source = "product.image")

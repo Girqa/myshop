@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Заказы</title>
+  <link th:href="@{/webjars/bootstrap/5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container">
+  <h3 class="text-center">История заказов</h3>
+
+  <h4 class="text-start" th:text="|Полная цена = ${totalPrice}Р|"></h4>
+
+  <table class="table table-primary">
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Дата</th>
+      <th scope="col">Цена</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order,stat : ${orders}" th:href="@{/order/{id}(id=${order.id})}"
+        onclick="window.location.href = this.getAttribute('href')"
+        style="cursor: pointer">
+      <th scope="row" th:text="${stat.count}"></th>
+      <td th:text="${order.createdAt}"></td>
+      <td th:text="${order.price}"></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

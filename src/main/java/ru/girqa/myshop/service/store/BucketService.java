@@ -18,6 +18,12 @@ public class BucketService {
 
   private final ProductRepository productRepository;
 
+  @Transactional
+  public Bucket findOrCreateByUserId(@NonNull Long userId) {
+    return bucketRepository.findByUserId(userId)
+        .orElseGet(() -> create(userId));
+  }
+
   @Transactional(readOnly = true)
   public Bucket findById(@NonNull Long id) {
     return bucketRepository.findById(id)
@@ -25,14 +31,10 @@ public class BucketService {
   }
 
   @Transactional
-  public Bucket create() {
-    return bucketRepository.save(new Bucket());
-  }
-
-  @Transactional
-  public void clear(@NonNull Long id) {
-    Bucket bucket = findById(id);
-    bucket.clear();
+  public Bucket create(@NonNull Long userId) {
+    return bucketRepository.save(Bucket.builder()
+        .userId(userId)
+        .build());
   }
 
   @Transactional

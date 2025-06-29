@@ -3,7 +3,7 @@
 
 create table images
 (
-    id         bigint       not null,
+    id         bigint       not null generated always as identity,
     image_name varchar(100) not null,
     image_size bigint       not null,
     image_data bytea        not null,
@@ -26,11 +26,10 @@ create table products
         references images (id) on delete set null
 );
 
-
 create table buckets
 (
-    id bigint not null generated always as identity,
-    -- if were users present bucket should reference to user
+    id      bigint not null generated always as identity,
+    user_id bigint not null,
 
     constraint buckets_pk primary key (id)
 );
