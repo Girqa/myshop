@@ -39,7 +39,7 @@ public interface ProductPageMapper {
   default List<SearchCriteria<Product>> extractProductFilters(ProductPageRequestDto dto) {
     List<SearchCriteria<Product>> filters = new ArrayList<>();
     if (dto.getSearchName() != null && !dto.getSearchName().isBlank()) {
-      filters.add(new LikeValueSearch<>(Product_.name.getName(), dto.getSearchName().trim()));
+      filters.add(new LikeValueSearch<>(Product_.NAME, dto.getSearchName().trim()));
     }
     return filters;
   }

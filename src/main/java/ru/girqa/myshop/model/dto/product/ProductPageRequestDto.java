@@ -1,9 +1,13 @@
 package ru.girqa.myshop.model.dto.product;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import ru.girqa.myshop.model.domain.sort.SortDirection;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class ProductPageRequestDto {
 
   public static int DEFAULT_PAGE = 1;

@@ -33,10 +33,12 @@ public class OrderFacadeService {
     return order;
   }
 
+  @Transactional(readOnly = true)
   public Order findById(@NonNull Long orderId) {
     return orderService.findById(orderId);
   }
 
+  @Transactional(readOnly = true)
   public OrdersHistory getHistory() {
     List<Order> orders = orderService.findAll();
     BigDecimal totalPrice = orders.stream()

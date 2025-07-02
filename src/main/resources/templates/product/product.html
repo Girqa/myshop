@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"/>
   <title>Просмотр товаров</title>
   <link th:href="@{/webjars/bootstrap/5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet"/>
   <link th:href="@{/static/css/product-bucket-ctrl.css}" rel="stylesheet"/>
@@ -17,7 +17,7 @@
     <img class="card-img-top mt-3 p-md-4"
          style="height: 500px; object-position: center"
          th:alt="${product.name()}"
-         th:src="@{/api/v1/image/{id}(id=${product.imageId()})}">
+         th:src="@{/api/v1/image/{id}(id=${product.imageId()})}"/>
     <div class="card-body">
 
       <p th:each="paragraph : ${#strings.arraySplit(product.description(), T(org.apache.commons.lang3.StringUtils).LF)}"

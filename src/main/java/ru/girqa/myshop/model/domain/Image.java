@@ -4,12 +4,9 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,9 +37,5 @@ public class Image extends BaseEntity {
   @Basic(fetch = FetchType.LAZY)
   @Column(name = "image_data", nullable = false)
   private byte[] data;
-
-  @Builder.Default
-  @OneToMany(mappedBy = "image")
-  private List<OrderProduct> referencedOrderProducts = new ArrayList<>();
 
 }

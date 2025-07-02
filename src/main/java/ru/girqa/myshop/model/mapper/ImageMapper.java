@@ -13,7 +13,7 @@ public interface ImageMapper {
   default Image toDomain(MultipartFile file) {
     try {
       return Image.builder()
-          .name(file.getName())
+          .name(file.getOriginalFilename())
           .size(file.getSize())
           .data(file.getBytes())
           .build();
