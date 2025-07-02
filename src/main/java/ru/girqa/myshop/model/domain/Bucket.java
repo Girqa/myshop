@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -24,6 +25,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class Bucket extends BaseEntity {
 
+  @Getter
   @Column(name = "user_id", updatable = false, nullable = false)
   private Long userId;
 

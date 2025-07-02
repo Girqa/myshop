@@ -1,5 +1,6 @@
 package ru.girqa.myshop.model.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -46,7 +47,7 @@ public class OrderProduct extends BaseEntity {
   private int amount;
 
   @ToStringExclude
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinColumn(name = "order_product_image", updatable = false)
   private Image image;
 
