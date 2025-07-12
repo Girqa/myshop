@@ -1,12 +1,13 @@
 package ru.girqa.myshop.service;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.logging.Level;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.girqa.myshop.model.domain.Bucket;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.girqa.myshop.model.domain.Order;
 import ru.girqa.myshop.model.domain.OrdersHistory;
 import ru.girqa.myshop.service.store.BucketService;
@@ -21,35 +22,41 @@ public class OrderFacadeService {
   private final BucketService bucketService;
 
   @Transactional
-  public Order createOrder(@NonNull Long userId) {
-    Bucket bucket = bucketService.findOrCreateByUserId(userId);
-    if (bucket.getProducts().isEmpty()) {
-      throw new IllegalStateException(
-          "Order can not be created for empty bucket"
-      );
-    }
-    Order order = orderService.create(bucket);
-    bucket.clear();
-    return order;
+  public Mono<Order> createOrder(@NonNull Long userId) {
+    return bucketService.findFilledById(userId)
+        .flatMap(bucket -> {
+          if (bucket.getProducts().isEmpty()) {
+            return Mono.error(new IllegalStateException(
+                "Order can not be created for empty bucket"
+            ));
+          }
+          return orderService.create(bucket)
+              .flatMap(order -> bucketService.clear(bucket.getId())
+                  .thenReturn(order))
+              .log("Create order call", Level.FINE);
+        })
+        .log("Find bucket call", Level.FINE);
   }
 
   @Transactional(readOnly = true)
-  public Order findById(@NonNull Long orderId) {
+  public Mono<Order> findById(@NonNull Long orderId) {
     return orderService.findById(orderId);
   }
 
   @Transactional(readOnly = true)
-  public OrdersHistory getHistory() {
-    List<Order> orders = orderService.findAll();
-    BigDecimal totalPrice = orders.stream()
+  public Mono<OrdersHistory> getHistory() {
+    Flux<Order> orders = orderService.findAll();
+
+    Mono<BigDecimal> totalPrice = orders
         .map(Order::getPrice)
         .reduce(BigDecimal::add)
-        .orElse(BigDecimal.ZERO);
+        .defaultIfEmpty(BigDecimal.ZERO);
 
-    return OrdersHistory.builder()
-        .totalPrice(totalPrice)
-        .orders(orders)
-        .build();
+    return Mono.zip(orders.collectList(), totalPrice)
+        .map(t -> OrdersHistory.builder()
+            .orders(t.getT1())
+            .totalPrice(t.getT2())
+            .build());
   }
 
 }

@@ -1,11 +1,15 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: myshop
 
-  datasource:
+  r2dbc:
+    url: ${DATABASE_URL:r2dbc:postgresql://localhost:5432/shop}
     username: ${DATABASE_USERNAME:postgres}
     password: ${DATABASE_PASSWORD:postgres}
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/shop}
-  jpa:
-    hibernate:
-      ddl-auto: validate
+
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/

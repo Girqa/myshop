@@ -10,13 +10,15 @@ import ru.girqa.myshop.model.dto.product.CreateProductDto;
 import ru.girqa.myshop.model.dto.product.ProductDto;
 import ru.girqa.myshop.model.dto.product.ProductPreviewDto;
 
-@Mapper(componentModel = ComponentModel.SPRING, uses = ImageMapper.class)
+@Mapper(componentModel = ComponentModel.SPRING)
 public interface ProductMapper {
 
+  @Mapping(target = "image", ignore = true)
+  @Mapping(target = "imageId", ignore = true)
   Product toDomain(CreateProductDto dto);
 
   @Mapping(target = "id", source = "product.id")
-  @Mapping(target = "imageId", source = "product.image.id")
+  @Mapping(target = "imageId", source = "product.imageId")
   @Mapping(target = "countInBucket", expression = "java(getProductInBucketAmount(product, bucket))")
   ProductPreviewDto toPreview(Product product, Bucket bucket);
 
@@ -27,7 +29,7 @@ public interface ProductMapper {
   }
 
   @Mapping(target = "id", source = "product.id")
-  @Mapping(target = "imageId", source = "product.image.id")
+  @Mapping(target = "imageId", source = "product.imageId")
   @Mapping(target = "countInBucket", expression = "java(getProductInBucketAmount(product, bucket))")
   ProductDto toDto(Product product, Bucket bucket);
 

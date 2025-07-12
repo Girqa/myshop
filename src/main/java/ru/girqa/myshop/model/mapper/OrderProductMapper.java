@@ -4,19 +4,19 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
+import ru.girqa.myshop.model.domain.BucketProductAmount;
 import ru.girqa.myshop.model.domain.OrderProduct;
-import ru.girqa.myshop.model.domain.ProductAmount;
 
 @Mapper(componentModel = ComponentModel.SPRING)
 public interface OrderProductMapper {
 
 
-  @Mapping(target = "order", ignore = true)
+  @Mapping(target = "orderId", ignore = true)
   @Mapping(target = "price", source = "product.price")
   @Mapping(target = "name", source = "product.name")
-  @Mapping(target = "image", source = "product.image")
+  @Mapping(target = "imageId", source = "product.imageId")
   @Mapping(target = "description", source = "product.description")
-  OrderProduct toOrder(ProductAmount productAmount);
+  OrderProduct toOrder(BucketProductAmount bucketProductAmount);
 
-  List<OrderProduct> toOrder(List<ProductAmount> productAmounts);
+  List<OrderProduct> toOrder(List<BucketProductAmount> bucketProductAmounts);
 }
