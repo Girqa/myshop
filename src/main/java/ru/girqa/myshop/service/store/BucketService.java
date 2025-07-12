@@ -4,11 +4,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 import ru.girqa.myshop.exception.ShopEntityNotFoundException;
 import ru.girqa.myshop.model.domain.Bucket;
-import ru.girqa.myshop.model.domain.Product;
+import ru.girqa.myshop.model.domain.BucketProductAmount;
 import ru.girqa.myshop.repository.BucketRepository;
-import ru.girqa.myshop.repository.ProductRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -16,50 +16,60 @@ public class BucketService {
 
   private final BucketRepository bucketRepository;
 
-  private final ProductRepository productRepository;
-
   @Transactional
-  public Bucket findOrCreateByUserId(@NonNull Long userId) {
-    return bucketRepository.findByUserId(userId)
-        .orElseGet(() -> create(userId));
+  public Mono<Bucket> findFilledOrCreateByUserId(@NonNull Long userId) {
+    return bucketRepository.findWithFilledProductsByUserId(userId)
+        .switchIfEmpty(create(userId));
   }
 
   @Transactional(readOnly = true)
-  public Bucket findById(@NonNull Long id) {
-    return bucketRepository.findById(id)
-        .orElseThrow(ShopEntityNotFoundException::new);
+  public Mono<Bucket> findFilledById(@NonNull Long id) {
+    return bucketRepository.findWithFilledProductsById(id)
+        .switchIfEmpty(Mono.error(ShopEntityNotFoundException::new));
   }
 
   @Transactional
-  public Bucket create(@NonNull Long userId) {
+  public Mono<Bucket> create(@NonNull Long userId) {
     return bucketRepository.save(Bucket.builder()
         .userId(userId)
         .build());
   }
 
   @Transactional
-  public void addProduct(@NonNull Long bucketId, @NonNull Long productId) {
-    Bucket bucket = findById(bucketId);
-    Product product = productRepository.findById(productId)
-        .orElseThrow(ShopEntityNotFoundException::new);
-    bucket.addProduct(product);
+  public Mono<Void> addProduct(@NonNull Long bucketId, @NonNull Long productId) {
+    return bucketRepository.saveProduct(BucketProductAmount.builder()
+        .bucketId(bucketId)
+        .productId(productId)
+        .amount(1)
+        .build()
+    ).then();
   }
 
   @Transactional
-  public void removeProduct(@NonNull Long bucketId, @NonNull Long productId) {
-    Bucket bucket = findById(bucketId);
-    bucket.removeProduct(productId);
+  public Mono<Void> removeProduct(@NonNull Long bucketId, @NonNull Long productId) {
+    return bucketRepository.deleteProduct(bucketId, productId)
+        .then();
   }
 
   @Transactional
-  public void incrementProductCount(@NonNull Long bucketId, @NonNull Long productId) {
-    Bucket bucket = findById(bucketId);
-    bucket.increaseProduct(productId);
+  public Mono<Void> incrementProductCount(@NonNull Long bucketId, @NonNull Long productId) {
+    return bucketRepository.findProduct(bucketId, productId)
+        .switchIfEmpty(Mono.error(ShopEntityNotFoundException::new))
+        .doOnNext(BucketProductAmount::increment)
+        .flatMap(bucketRepository::updateProduct)
+        .then();
   }
 
   @Transactional
-  public void decrementProductCount(@NonNull Long bucketId, @NonNull Long productId) {
-    Bucket bucket = findById(bucketId);
-    bucket.decreaseProduct(productId);
+  public Mono<Void> decrementProductCount(@NonNull Long bucketId, @NonNull Long productId) {
+    return bucketRepository.findProduct(bucketId, productId)
+        .switchIfEmpty(Mono.error(ShopEntityNotFoundException::new))
+        .doOnNext(BucketProductAmount::decrement)
+        .flatMap(bucketRepository::updateProduct)
+        .then();
+  }
+
+  public Mono<Void> clear(@NonNull Long bucketId) {
+    return bucketRepository.deleteProductsByBucketId(bucketId);
   }
 }

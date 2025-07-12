@@ -1,7 +1,6 @@
 package ru.girqa.myshop.model.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
 import ru.girqa.myshop.model.domain.Order;
 import ru.girqa.myshop.model.domain.OrderProduct;
@@ -14,7 +13,6 @@ public interface OrderMapper {
 
   OrderDto toDto(Order order);
 
-  @Mapping(target = "imageId", source = "image.id")
   OrderProductDto toDto(OrderProduct orderProduct);
 
   OrderPreviewDto toPreview(Order order);

@@ -1,6 +1,5 @@
 package ru.girqa.myshop.model.domain;
 
-import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -9,8 +8,6 @@ import lombok.Getter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
-import ru.girqa.myshop.model.domain.search.SearchCriteria;
 import ru.girqa.myshop.model.domain.sort.ProductSort;
 
 @Getter
@@ -23,25 +20,10 @@ public class ProductPageRequest {
   private final int pageSize;
 
   @Builder.Default
-  private List<SearchCriteria<Product>> filters = new ArrayList<>();
+  private String searchName = null;
 
   @Builder.Default
   private List<ProductSort> sorts = new ArrayList<>();
-
-  public Specification<Product> toSpecification() {
-    return (root, query, cb) -> {
-      if (filters.isEmpty()) {
-        return cb.conjunction();
-      }
-
-      List<Predicate> predicates = filters.stream()
-          .map(SearchCriteria::toSpecification)
-          .map(specification -> specification.toPredicate(root, query, cb))
-          .toList();
-
-      return cb.and(predicates.toArray(new Predicate[0]));
-    };
-  }
 
   public Pageable toPageRequest() {
     if (sorts.isEmpty()) {

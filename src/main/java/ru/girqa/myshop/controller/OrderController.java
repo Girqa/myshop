@@ -1,21 +1,19 @@
 package ru.girqa.myshop.controller;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.girqa.myshop.model.domain.Order;
-import ru.girqa.myshop.model.domain.OrdersHistory;
-import ru.girqa.myshop.model.dto.order.OrderDto;
-import ru.girqa.myshop.model.dto.order.OrderPreviewDto;
+import org.springframework.web.reactive.result.view.Rendering;
+import reactor.core.publisher.Mono;
 import ru.girqa.myshop.model.mapper.OrderMapper;
 import ru.girqa.myshop.service.OrderFacadeService;
 
+@Slf4j
 @Controller
 @RequestMapping("/order")
 @RequiredArgsConstructor
@@ -26,32 +24,32 @@ public class OrderController {
   private final OrderMapper orderMapper;
 
   @PostMapping
-  public String createOrder(
-      @RequestParam(name = "user_id", required = false, defaultValue = "1") Long userId
-  ) {
-    Order order = orderFacadeService.createOrder(userId);
-    return "redirect:/order/%d".formatted(order.getId());
+  public Mono<String> createOrder(
+      @RequestParam(name = "user_id", required = false, defaultValue = "1") Long userId) {
+    return orderFacadeService.createOrder(userId)
+        .map(order -> "redirect:/order/%d".formatted(order.getId()));
   }
 
   @GetMapping("/{id}")
-  public String getOrder(@PathVariable Long id, Model model) {
-    Order order = orderFacadeService.findById(id);
-    OrderDto dto = orderMapper.toDto(order);
-    model.addAttribute("order", dto);
-    return "order/order";
+  public Mono<Rendering> getOrder(@PathVariable Long id) {
+    return orderFacadeService.findById(id)
+        .map(orderMapper::toDto)
+        .map(order -> Rendering.view("order/order")
+            .modelAttribute("order", order)
+            .build()
+        );
   }
 
   @GetMapping("/all")
-  public String getAllOrders(Model model) {
-    OrdersHistory history = orderFacadeService.getHistory();
-    List<OrderPreviewDto> orders = history.getOrders().stream()
-        .map(orderMapper::toPreview)
-        .toList();
-
-    model.addAttribute("totalPrice", history.getTotalPrice());
-    model.addAttribute("orders", orders);
-
-    return "order/orders";
+  public Mono<Rendering> getAllOrders() {
+    return orderFacadeService.getHistory()
+        .map(history -> Rendering.view("order/orders")
+            .modelAttribute("totalPrice", history.getTotalPrice())
+            .modelAttribute("orders", history.getOrders().stream()
+                .map(orderMapper::toPreview)
+                .toList()
+            ).build()
+        );
   }
 
 }

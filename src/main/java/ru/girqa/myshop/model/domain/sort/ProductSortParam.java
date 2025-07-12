@@ -1,12 +1,11 @@
 package ru.girqa.myshop.model.domain.sort;
 
 import lombok.Getter;
-import ru.girqa.myshop.model.domain.Product_;
 
 @Getter
 public enum ProductSortParam {
-  NAME(Product_.NAME),
-  PRICE(Product_.PRICE);
+  NAME("product_name"),
+  PRICE("product_price");
 
   private final String fieldName;
 

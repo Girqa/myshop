@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Непредвиденная ошибка</title>
+  <link th:href="@{/webjars/bootstrap/5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="container text-center my-5">
+  <div class="card shadow-sm p-4">
+    <h1 class="display-4 text-danger mb-3">Ошибка <span th:text="${status}">Error</span></h1>
+    <h4 class="mb-3">Что-то пошло не так</h4>
+    <p class="text-start mb-4" th:text="${message}">Подробности ошибки</p>
+
+    <ul class="list-group mb-4 text-start mx-auto" style="max-width: 400px;">
+      <li class="list-group-item"><strong>Время:</strong> <span th:text="${timestamp}">Время</span></li>
+    </ul>
+
+    <a th:href="@{/}" class="btn btn-primary btn-lg">Вернуться на главную</a>
+  </div>
+</div>
+
+<script th:src="@{/webjars/bootstrap/5.3.0/dist/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>
