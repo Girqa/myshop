@@ -1,4 +1,4 @@
-package ru.girqa.myshop.controller.handler;
+package ru.girqa.myshop.controller.exception;
 
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
