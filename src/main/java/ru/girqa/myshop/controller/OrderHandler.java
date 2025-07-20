@@ -35,7 +35,7 @@ public class OrderHandler {
 
   public Mono<ServerResponse> getOrder(ServerRequest request) {
     Long id = Long.valueOf(request.pathVariable("id"));
-    return orderFacadeService.findById(id)
+    return orderFacadeService.findByIdWithProducts(id)
         .map(orderMapper::toDto)
         .flatMap(order -> ServerResponse.ok().render("order/order", Map.of(
             "order", order

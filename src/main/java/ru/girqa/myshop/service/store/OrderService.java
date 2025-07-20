@@ -32,7 +32,7 @@ public class OrderService {
   }
 
   @Transactional(readOnly = true)
-  public Mono<Order> findById(@NonNull Long id) {
+  public Mono<Order> findByIdWithProducts(@NonNull Long id) {
     return orderRepository.findById(id)
         .switchIfEmpty(Mono.error(ShopEntityNotFoundException::new))
         .flatMap(order -> orderProductRepository.findByOrderId(order.getId())

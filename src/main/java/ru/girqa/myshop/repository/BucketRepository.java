@@ -91,6 +91,7 @@ public class BucketRepository {
                 left join buckets_products bp on bp.bucket_id = b.id
                 left join products p on bp.product_id = p.id
                 where b.%s = :id
+                order by bp.product_id
             """.formatted(idColumn))
         .bind("id", id)
         .map(this::mapBucketWithProduct)

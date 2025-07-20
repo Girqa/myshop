@@ -14,7 +14,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table("images")
 @Getter
 @Setter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
