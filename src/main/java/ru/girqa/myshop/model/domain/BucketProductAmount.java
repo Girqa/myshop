@@ -14,7 +14,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table("buckets_products")
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor

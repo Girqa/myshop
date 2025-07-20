@@ -1,9 +1,9 @@
 package ru.girqa.myshop.service;
 
 import java.math.BigDecimal;
-import java.util.logging.Level;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Delegate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -17,6 +17,7 @@ import ru.girqa.myshop.service.store.OrderService;
 @RequiredArgsConstructor
 public class OrderFacadeService {
 
+  @Delegate
   private final OrderService orderService;
 
   private final BucketService bucketService;
@@ -32,15 +33,8 @@ public class OrderFacadeService {
           }
           return orderService.create(bucket)
               .flatMap(order -> bucketService.clear(bucket.getId())
-                  .thenReturn(order))
-              .log("Create order call", Level.FINE);
-        })
-        .log("Find bucket call", Level.FINE);
-  }
-
-  @Transactional(readOnly = true)
-  public Mono<Order> findById(@NonNull Long orderId) {
-    return orderService.findById(orderId);
+                  .thenReturn(order));
+        });
   }
 
   @Transactional(readOnly = true)

@@ -12,7 +12,7 @@
 ## Требования
 - Java JDK 21
 - Apache Maven 3.9.9+
-- Приложение поставляется в виде самодостаточного Jar архива с встроенным сервлет сервером Tomcat
+- Приложение поставляется в виде самодостаточного Jar архива с встроенным сервлет сервером Netty
 - База данных PostgreSQL 16+
 
 ## Запуск
@@ -28,11 +28,11 @@
 - [/src/test/java](src/test/java) - директория с тестами проекта
 
 ### Структура каталогов исходного кода
-- [configuration](src/main/java/ru/girqa/myshop/configuration) - конфигурация приложения. Содержит настройки шаблонизатора Thymeleaf
-- [controller](src/main/java/ru/girqa/myshop/controller) - содержит основные контроллеры приложения (главная страница витрины товаров, конкретный товар, корзина, заказы, изображения)
+- [configuration](src/main/java/ru/girqa/myshop/configuration) - конфигурация приложения. Содержит настройки шаблонизатора Thymeleaf и маршрутизации HTTP запросов
+- [controller](src/main/java/ru/girqa/myshop/controller) - содержит основные HTTP обработчики приложения (главная страница витрины товаров, конкретный товар, корзина, заказы, изображения)
 - [exception](src/main/java/ru/girqa/myshop/exception) - содержит базовые исключения приложения
 - [model](src/main/java/ru/girqa/myshop/model) - содержит доменные классы (для работы с БД), транспортные сущности и их мапперы
-- [repository](src/main/java/ru/girqa/myshop/repository) - содержит интерфейсы репозиториев для работы с Spring Data Jpa. В большинстве случаев было достаточно базовых реализаций
+- [repository](src/main/java/ru/girqa/myshop/repository) - содержит репозитории для работы с Spring Data R2dbc. В большинстве случаев было достаточно базовых реализаций
 - [service](src/main/java/ru/girqa/myshop/service) - содержит сервисный слой приложения
 
 ### Ресурсы проекта

@@ -23,7 +23,7 @@ public class BucketHandler {
   private final ProductMapper productMapper;
 
   public Mono<ServerResponse> getBucketPage(ServerRequest request) {
-    Long userId = request.queryParam("userId")
+    Long userId = request.queryParam("user_id")
         .map(Long::valueOf)
         .orElse(1L);
 

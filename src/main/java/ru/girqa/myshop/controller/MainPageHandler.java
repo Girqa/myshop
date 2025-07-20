@@ -10,7 +10,6 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import ru.girqa.myshop.model.domain.Bucket;
 import ru.girqa.myshop.model.domain.Product;
-import ru.girqa.myshop.model.domain.sort.SortDirection;
 import ru.girqa.myshop.model.dto.product.ProductPageRequestDto;
 import ru.girqa.myshop.model.dto.product.ProductPreviewDto;
 import ru.girqa.myshop.model.mapper.ProductMapper;
@@ -34,9 +33,7 @@ public class MainPageHandler {
     Long userId = request.queryParam("user_id")
         .map(Long::valueOf)
         .orElse(1L);
-    Mono<ProductPageRequestDto> pageRequestDto = request.formData()
-        .map(data -> toPageRequest(data.asSingleValueMap()))
-        .cache();
+    Mono<ProductPageRequestDto> pageRequestDto = request.bind(ProductPageRequestDto.class);
 
     Mono<Page<Product>> pageData = pageRequestDto.map(productPageMapper::toDomain)
         .flatMap(productService::findAllForPage);
@@ -55,22 +52,6 @@ public class MainPageHandler {
                 "pageRequest", t.getT4(),
                 "availablePageSizes", List.of(10, 20, 50, 100)
             )));
-  }
-
-  private ProductPageRequestDto toPageRequest(Map<String, String> params) {
-    return ProductPageRequestDto.builder()
-        .searchName(params.get("searchName"))
-        .nameSort(params.get("nameSort") == null ?
-            null : SortDirection.valueOf(params.get("nameSort")))
-        .priceSort(params.get("priceSort") == null ?
-            null : SortDirection.valueOf(params.get("priceSort")))
-        .page(Integer.parseInt(params.getOrDefault(
-            "page", String.valueOf(ProductPageRequestDto.DEFAULT_PAGE)))
-        )
-        .pageSize(Integer.parseInt(params.getOrDefault(
-            "pageSize", String.valueOf(ProductPageRequestDto.DEFAULT_PAGE_SIZE)
-        )))
-        .build();
   }
 
 }
