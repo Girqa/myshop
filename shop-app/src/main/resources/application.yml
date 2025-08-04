@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: myshop
+
+  r2dbc:
+    url: ${DATABASE_URL:r2dbc:postgresql://localhost:5432/shop}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+
+  data:
+    redis:
+      username: ${REDIS_USER:redis}
+      password: ${REDIS_USER_PASSWORD:redispass}
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+
+app:
+  payment:
+    url: http://localhost:8081

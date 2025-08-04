@@ -1,0 +1,95 @@
+openapi: 3.0.4
+info:
+  title: Спецификация программного интерфейса сервиса платежей
+  description: Предоставляет функционал по проведению платежей пользователями приложения MyShop
+  version: 1.0.0
+  contact:
+    name: Girqa - java developer
+    email: reso11er@yandex.ru
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: 'http://localhost:8081'
+    description: Сервер локального развертывания
+paths:
+  /api/v1/account/{userId}/balance:
+    get:
+      operationId: getUserBalance
+      summary: Метод получения баланса по счету
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceDto'
+        '404':
+          description: Не удалось найти счет пользователя
+  /api/v1/account/{userId}/payment:
+    post:
+      operationId: doPayment
+      summary: Метод осуществления оплаты товаров
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentDto'
+      responses:
+        '200':
+          description: Платеж успешно проведен
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: Невозможно провести платеж по указанному счету
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  schemas:
+    UserId:
+      type: integer
+      format: int64
+      minimum: 0
+    OrderId:
+      type: integer
+      format: int64
+      minimum: 0
+    MoneyAmount:
+      type: number
+      format: decimal
+    BalanceDto:
+      type: object
+      properties:
+        userId:
+          $ref: '#/components/schemas/UserId'
+        balance:
+          $ref: '#/components/schemas/MoneyAmount'
+      required:
+        - userId
+        - balance
+    PaymentDto:
+      type: object
+      properties:
+        orderId:
+          $ref: '#/components/schemas/OrderId'
+        amount:
+          $ref: '#/components/schemas/MoneyAmount'
+      required:
+        - orderId
+        - amount
+
+  parameters:
+    UserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/UserId'

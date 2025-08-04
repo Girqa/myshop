@@ -1,0 +1,32 @@
+package ru.girqa.myshop.controller;
+
+import java.math.BigDecimal;
+import lombok.RequiredArgsConstructor;
+import org.openapitools.client.api.DefaultApi;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
+import ru.girqa.payment.dto.BalanceDto;
+
+@RestController
+@RequestMapping("/api/v1/balance")
+@RequiredArgsConstructor
+public class BalanceController {
+
+  private final DefaultApi paymentGateway;
+
+  @GetMapping
+  public Mono<ResponseEntity<BigDecimal>> balance(
+      @RequestParam(defaultValue = "1", required = false) Long userId
+  ) {
+    return paymentGateway.getUserBalance(userId)
+        .map(BalanceDto::getBalance)
+        .map(ResponseEntity::ok)
+        .onErrorReturn(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build());
+  }
+
+}
