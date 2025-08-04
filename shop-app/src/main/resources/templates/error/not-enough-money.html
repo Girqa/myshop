@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Ошибка оплаты — недостаточно средств</title>
+  <link th:href="@{/webjars/bootstrap/5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="container text-center my-5">
+  <div class="card shadow-sm p-4">
+    <h1 class="display-4 text-warning mb-3">Ошибка <span th:text="${status}">402</span></h1>
+    <h4 class="mb-3 text-warning">Недостаточно средств на счёте</h4>
+    <p class="text-start mb-4">
+      У вас недостаточно денег для проведения этой операции. Пожалуйста, пополните счёт и попробуйте снова.
+    </p>
+
+    <ul class="list-group mb-4 text-start mx-auto" style="max-width: 400px;">
+      <li class="list-group-item"><strong>Время:</strong> <span th:text="${timestamp}">Время</span></li>
+      <li class="list-group-item"><strong>Код ошибки:</strong> <span th:text="${errorCode}">INSUFFICIENT_FUNDS</span></li>
+    </ul>
+
+    <a th:href="@{/}" class="btn btn-secondary btn-lg ms-2">Вернуться на главную</a>
+  </div>
+</div>
+
+<script th:src="@{/webjars/bootstrap/5.3.0/dist/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>
