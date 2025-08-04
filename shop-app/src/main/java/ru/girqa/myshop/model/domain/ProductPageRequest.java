@@ -17,9 +17,9 @@ import ru.girqa.myshop.model.domain.sort.ProductSort;
 @AllArgsConstructor
 public class ProductPageRequest {
 
-  private int page;
+  private int page = 0;
 
-  private int pageSize;
+  private int pageSize = 10;
 
   @Builder.Default
   private String searchName = null;

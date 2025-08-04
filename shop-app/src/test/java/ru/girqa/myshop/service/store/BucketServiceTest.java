@@ -31,12 +31,14 @@ class BucketServiceTest {
 
   @Mock
   BucketRepository bucketRepositoryMock;
+  @Mock
+  BucketCacheService bucketCacheServiceMock;
   @InjectMocks
   BucketService bucketService;
 
   @BeforeEach
   void setUpMocks() {
-    Mockito.reset(bucketRepositoryMock);
+    Mockito.reset(bucketRepositoryMock, bucketCacheServiceMock);
   }
 
   @Nested
@@ -51,6 +53,8 @@ class BucketServiceTest {
     void shouldSwitchToErrorIfNotFoundByUserId() {
       when(bucketRepositoryMock.findWithFilledProductsByUserId(anyLong()))
           .thenReturn(Mono.empty());
+      when(bucketCacheServiceMock.getByUserId(anyLong()))
+          .thenReturn(Mono.empty());
 
       StepVerifier.create(bucketService.findFilledByUserId(bucket.getId()))
           .verifyError(ShopEntityNotFoundException.class);
@@ -60,11 +64,15 @@ class BucketServiceTest {
     }
 
     @Test
-    void shouldFindByUserId() {
+    void shouldFindByUserIdInDb() {
       when(bucketRepositoryMock.findWithFilledProductsByUserId(bucket.getUserId()))
           .thenReturn(Mono.just(bucket));
       when(bucketRepositoryMock.save(any()))
           .thenReturn(Mono.empty());
+      when(bucketCacheServiceMock.getByUserId(bucket.getUserId()))
+          .thenReturn(Mono.empty());
+      when(bucketCacheServiceMock.save(any()))
+          .thenReturn(Mono.just(bucket));
 
       StepVerifier.create(bucketService.findFilledOrCreateByUserId(bucket.getUserId()))
           .assertNext(found -> assertEquals(bucket, found))
@@ -107,6 +115,10 @@ class BucketServiceTest {
           .thenReturn(Mono.empty());
       when(bucketRepositoryMock.save(any()))
           .thenReturn(Mono.just(bucket));
+      when(bucketCacheServiceMock.getByUserId(bucket.getUserId()))
+          .thenReturn(Mono.empty());
+      when(bucketCacheServiceMock.save(any()))
+          .thenReturn(Mono.just(bucket));
 
       StepVerifier.create(bucketService.findFilledOrCreateByUserId(bucket.getUserId()))
           .assertNext(found -> assertEquals(bucket, found))
@@ -130,6 +142,8 @@ class BucketServiceTest {
     void shouldSaveProduct() {
       when(bucketRepositoryMock.saveProduct(any()))
           .thenReturn(Mono.empty());
+      when(bucketRepositoryMock.getUserIdByBucketId(anyLong())).thenReturn(Mono.just(4L));
+      when(bucketCacheServiceMock.delete(anyLong())).thenReturn(Mono.empty());
 
       bucketService.addProduct(BUCKET_ID, PRODUCT_ID).block();
 
@@ -151,21 +165,30 @@ class BucketServiceTest {
     void shouldDeleteProduct() {
       when(bucketRepositoryMock.deleteProduct(anyLong(), anyLong()))
           .thenReturn(Mono.empty());
+      when(bucketRepositoryMock.getUserIdByBucketId(anyLong()))
+          .thenReturn(Mono.just(4L));
+      when(bucketCacheServiceMock.delete(anyLong())).thenReturn(Mono.empty());
 
       bucketService.removeProduct(BUCKET_ID, PRODUCT_ID).block();
 
       verify(bucketRepositoryMock, times(1))
           .deleteProduct(BUCKET_ID, PRODUCT_ID);
+      verify(bucketCacheServiceMock, times(1))
+          .delete(4L);
     }
 
     @Test
     void shouldClearProducts() {
       when(bucketRepositoryMock.deleteProductsByBucketId(any())).thenReturn(Mono.empty());
+      when(bucketRepositoryMock.getUserIdByBucketId(anyLong())).thenReturn(Mono.just(5L));
+      when(bucketCacheServiceMock.delete(anyLong())).thenReturn(Mono.empty());
 
       bucketService.clear(BUCKET_ID).block();
 
       verify(bucketRepositoryMock, times(1))
           .deleteProductsByBucketId(BUCKET_ID);
+      verify(bucketCacheServiceMock, times(1))
+          .delete(5L);
     }
 
     @Test
@@ -177,6 +200,8 @@ class BucketServiceTest {
               .productId(PRODUCT_ID)
               .build()));
       when(bucketRepositoryMock.updateProduct(any())).thenReturn(Mono.empty());
+      when(bucketRepositoryMock.getUserIdByBucketId(anyLong())).thenReturn(Mono.just(4L));
+      when(bucketCacheServiceMock.delete(anyLong())).thenReturn(Mono.empty());
 
       bucketService.incrementProductCount(BUCKET_ID, PRODUCT_ID).block();
 
@@ -201,6 +226,9 @@ class BucketServiceTest {
               .productId(PRODUCT_ID)
               .build()));
       when(bucketRepositoryMock.updateProduct(any())).thenReturn(Mono.empty());
+      when(bucketRepositoryMock.getUserIdByBucketId(anyLong()))
+          .thenReturn(Mono.just(5L));
+      when(bucketCacheServiceMock.delete(anyLong())).thenReturn(Mono.empty());
 
       bucketService.decrementProductCount(BUCKET_ID, PRODUCT_ID).block();
 
@@ -210,6 +238,8 @@ class BucketServiceTest {
           .findProduct(BUCKET_ID, PRODUCT_ID);
       verify(bucketRepositoryMock, times(1))
           .updateProduct(captor.capture());
+      verify(bucketCacheServiceMock, times(1))
+          .delete(5L);
 
       BucketProductAmount product = captor.getValue();
       assertNotNull(product);

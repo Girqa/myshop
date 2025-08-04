@@ -1,19 +1,38 @@
 services:
+
   myshop:
     container_name: shop
     restart: on-failure
-    build: .
+    build: shop-app/.
     ports:
       - "8080:8080"
-      - "8000:8000"
     environment:
-      DATABASE_URL: jdbc:postgresql://postgres:5432/shop
+      DATABASE_URL: postgres:5432/shop
       DATABASE_USERNAME: postgres
       DATABASE_PASSWORD: postgres
+      REDIS_USER: redis
+      REDIS_USER_PASSWORD: redispass
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PAYMENT_API_URL: http://payment:8081
     networks:
       - shop-net
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+      payment-service:
+        condition: service_started
+      redis:
+        condition: service_healthy
+
+  payment-service:
+    container_name: payment
+    restart: on-failure
+    build: payment-service/.
+    ports:
+      - "8081:8081"
+    networks:
+      - shop-net
 
   postgres:
     container_name: postgres
@@ -38,11 +57,11 @@ services:
 
   redis:
     image: redis:7.0.11-alpine
-    container_name: redis_container
+    container_name: redis
     environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_USER=${REDIS_USER}
-      - REDIS_USER_PASSWORD=${REDIS_USER_PASSWORD}
+      REDIS_PASSWORD: password
+      REDIS_USER: redis
+      REDIS_USER_PASSWORD: redispass
     ports:
       - "6379:6379"
     deploy:
@@ -53,19 +72,21 @@ services:
         reservations:
           cpus: '0.25'
           memory: 128M
+    networks:
+      - shop-net
     command: >
       sh -c '
         mkdir -p /usr/local/etc/redis &&
         echo "bind 0.0.0.0" > /usr/local/etc/redis/redis.conf &&
-        echo "requirepass $REDIS_PASSWORD" >> /usr/local/etc/redis/redis.conf &&
+        echo "requirepass password" >> /usr/local/etc/redis/redis.conf &&
         echo "appendonly yes" >> /usr/local/etc/redis/redis.conf &&
         echo "appendfsync everysec" >> /usr/local/etc/redis/redis.conf &&
         echo "user default on nopass ~* +@all" > /usr/local/etc/redis/users.acl &&
-        echo "user $REDIS_USER on >$REDIS_USER_PASSWORD ~* +@all" >> /usr/local/etc/redis/users.acl &&
+        echo "user redis on >redispass ~* +@all" >> /usr/local/etc/redis/users.acl &&
         redis-server /usr/local/etc/redis/redis.conf --aclfile /usr/local/etc/redis/users.acl
       '
     healthcheck:
-      test: [ "CMD", "redis-cli", "-a", "$REDIS_PASSWORD", "ping" ]
+      test: [ "CMD", "redis-cli", "-a", "password", "ping" ]
       interval: 30s
       timeout: 10s
       retries: 5
