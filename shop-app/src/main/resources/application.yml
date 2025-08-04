@@ -6,9 +6,16 @@ spring:
     name: myshop
 
   r2dbc:
-    url: ${DATABASE_URL:r2dbc:postgresql://localhost:5432/shop}
+    url: r2dbc:postgresql://${DATABASE_URL:localhost:5432/shop}
     username: ${DATABASE_USERNAME:postgres}
     password: ${DATABASE_PASSWORD:postgres}
+
+  liquibase:
+    url: jdbc:postgresql://${DATABASE_URL:localhost:5432/shop}
+    user: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    enabled: true
 
   data:
     redis:
@@ -23,4 +30,4 @@ spring:
 
 app:
   payment:
-    url: http://localhost:8081
+    url: ${PAYMENT_API_URL:http://localhost:8081}

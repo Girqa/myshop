@@ -18,7 +18,8 @@ public class WebClientConfig {
       WebClient.Builder builder) {
     ApiClient client = new ApiClient(builder.baseUrl(basePaymentUrl)
         .defaultStatusHandler(HttpStatusCode::isError, ignored -> Mono.empty())
-        .build());
+        .build())
+        .setBasePath(basePaymentUrl);
     return new DefaultApi(client);
   }
 

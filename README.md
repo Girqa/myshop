@@ -9,36 +9,49 @@
 - Страница всех заказов
 - Страница конкретного заказа
 
+Помимо основного приложения магазина, представлено простенькое приложение сервиса оплаты, обеспечивающего
+следующие функции:
+- Получение баланса пользователя по его userId (по умолчанию 100000 - храниться в памяти)
+- Списание средств со счета
+
 ## Требования
 - Java JDK 21
 - Apache Maven 3.9.9+
-- Приложение поставляется в виде самодостаточного Jar архива с встроенным сервлет сервером Netty
-- База данных PostgreSQL 16+
+- Приложение поставляется в виде двух самодостаточных Jar архивов с встроенными сервлет контейнерами Netty
+- RDBMS PostgreSQL 16+
+- Хранилище кеша Redis 7.0.11
 
 ## Запуск
 1. Выполнить сборку приложения: `mvn clean package`
 2. Выполните запуск Docker compose манифеста: `docker compose up -d`
 3. Проект доступен на порту 8080, основная страница доступна по адресу: http://localhost:8080/
 
-## Структура проекта
+## Структура модулей
+- api-spec - контракт взаимодействия МС myshop и payment
+- payment-service-api - проект для генерации серверной части приложения платежей на основе контракта api-spec
+- payment-service-client - проект для генерации клиентской части для сервиса платежей
+- payment-service - сервис платежей
+- shop-app - приложение витрины магазина
+
+## Структура проекта shop-app
 ### Базовые пакеты
-- [/src/main/java](src/main/java) - исходный код приложения
-- [/src/main/resources](src/main/resources) - конфигурационные файлы приложения
-- [pom.xml](pom.xml) - Maven конфигурация
-- [/src/test/java](src/test/java) - директория с тестами проекта
+- [src/main/java](shop-app/src/main/java) - исходный код приложения
+- [/src/main/resources](shop-app/src/main/resources) - конфигурационные файлы приложения
+- [pom.xml](shop-app/pom.xml) - Maven конфигурация
+- [/src/test/java](shop-app/src/test/java) - директория с тестами проекта
 
 ### Структура каталогов исходного кода
-- [configuration](src/main/java/ru/girqa/myshop/configuration) - конфигурация приложения. Содержит настройки шаблонизатора Thymeleaf и маршрутизации HTTP запросов
-- [controller](src/main/java/ru/girqa/myshop/controller) - содержит основные HTTP обработчики приложения (главная страница витрины товаров, конкретный товар, корзина, заказы, изображения)
-- [exception](src/main/java/ru/girqa/myshop/exception) - содержит базовые исключения приложения
-- [model](src/main/java/ru/girqa/myshop/model) - содержит доменные классы (для работы с БД), транспортные сущности и их мапперы
-- [repository](src/main/java/ru/girqa/myshop/repository) - содержит репозитории для работы с Spring Data R2dbc. В большинстве случаев было достаточно базовых реализаций
-- [service](src/main/java/ru/girqa/myshop/service) - содержит сервисный слой приложения
+- [configuration](shop-app/src/main/java/ru/girqa/myshop/configuration) - конфигурация приложения. Содержит настройки шаблонизатора Thymeleaf и маршрутизации HTTP запросов
+- [controller](shop-app/src/main/java/ru/girqa/myshop/controller) - содержит основные HTTP обработчики приложения (главная страница витрины товаров, конкретный товар, корзина, заказы, изображения)
+- [exception](shop-app/src/main/java/ru/girqa/myshop/exception) - содержит базовые исключения приложения
+- [model](shop-app/src/main/java/ru/girqa/myshop/model) - содержит доменные классы (для работы с БД), транспортные сущности и их мапперы
+- [repository](shop-app/src/main/java/ru/girqa/myshop/repository) - содержит репозитории для работы с Spring Data R2dbc. В большинстве случаев было достаточно базовых реализаций
+- [service](shop-app/src/main/java/ru/girqa/myshop/service) - содержит сервисный слой приложения
 
 ### Ресурсы проекта
-- [application.yml](src/main/resources/application.yml) - конфигурационный файл приложения
-- [templates](src/main/resources/templates) - шаблоны thymeleaf для отображения в слое представления
-- [db/changelog](src/main/resources/db/changelog) - схема бд, накатываемая посредствам liquibase
+- [application.yml](shop-app/src/main/resources/application.yml) - конфигурационный файл приложения
+- [templates](shop-app/src/main/resources/templates) - шаблоны thymeleaf для отображения в слое представления
+- [db/changelog](shop-app/src/main/resources/db/changelog) - схема бд, накатываемая посредствам liquibase
 
 ## Тестирование
 Тесты слоя данных реализованы на базе Testcontainers. Перед запуском тестов необходимо запустить Docker окружение.

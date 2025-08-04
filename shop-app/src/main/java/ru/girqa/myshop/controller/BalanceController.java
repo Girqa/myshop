@@ -2,6 +2,7 @@ package ru.girqa.myshop.controller;
 
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.openapitools.client.api.DefaultApi;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import ru.girqa.payment.dto.BalanceDto;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/balance")
 @RequiredArgsConstructor
@@ -26,7 +28,9 @@ public class BalanceController {
     return paymentGateway.getUserBalance(userId)
         .map(BalanceDto::getBalance)
         .map(ResponseEntity::ok)
-        .onErrorReturn(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build());
+        .doOnError(throwable -> log.error("Error while getting balance for user {}",
+            userId, throwable)
+        ).onErrorReturn(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build());
   }
 
 }
