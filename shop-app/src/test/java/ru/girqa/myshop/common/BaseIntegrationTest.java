@@ -1,5 +1,6 @@
 package ru.girqa.myshop.common;
 
+import com.redis.testcontainers.RedisContainer;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -18,5 +19,9 @@ public class BaseIntegrationTest {
   static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>(
       "postgres:16-alpine"
   );
+
+  @Container
+  @ServiceConnection
+  static final RedisContainer redisContainer = new RedisContainer("redis:7.0.11-alpine");
 
 }

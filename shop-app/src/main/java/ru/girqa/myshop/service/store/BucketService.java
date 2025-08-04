@@ -2,7 +2,6 @@ package ru.girqa.myshop.service.store;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
@@ -17,35 +16,24 @@ public class BucketService {
 
   private final BucketRepository bucketRepository;
 
-  private final ReactiveRedisTemplate<String, Bucket> redisTemplate;
+  private final BucketCacheService cacheService;
 
   @Transactional
   public Mono<Bucket> findFilledOrCreateByUserId(@NonNull Long userId) {
-    String key = userId.toString();
-
-    return redisTemplate.opsForValue().get(key)
-        .switchIfEmpty(
-            bucketRepository.findWithFilledProductsByUserId(userId)
-                .switchIfEmpty(create(userId))
-                .flatMap(bucket ->
-                    redisTemplate.opsForValue().set(key, bucket)
-                        .thenReturn(bucket)
-                )
+    return cacheService.getByUserId(userId)
+        .switchIfEmpty(bucketRepository.findWithFilledProductsByUserId(userId)
+            .switchIfEmpty(create(userId))
+            .flatMap(cacheService::save)
         );
   }
 
   @Transactional(readOnly = true)
   public Mono<Bucket> findFilledByUserId(@NonNull Long userId) {
-    String key = userId.toString();
-
-    return redisTemplate.opsForValue().get(key)
+    return cacheService.getByUserId(userId)
         .switchIfEmpty(
             bucketRepository.findWithFilledProductsByUserId(userId)
                 .switchIfEmpty(Mono.error(ShopEntityNotFoundException::new))
-                .flatMap(bucket ->
-                    redisTemplate.opsForValue().set(key, bucket)
-                        .thenReturn(bucket)
-                )
+                .flatMap(cacheService::save)
         );
   }
 
@@ -64,7 +52,7 @@ public class BucketService {
             .amount(1)
             .build())
         .then(bucketRepository.getUserIdByBucketId(bucketId))
-        .flatMap(userId -> redisTemplate.opsForValue().delete(userId.toString()))
+        .flatMap(cacheService::delete)
         .then();
   }
 
@@ -72,7 +60,7 @@ public class BucketService {
   public Mono<Void> removeProduct(@NonNull Long bucketId, @NonNull Long productId) {
     return bucketRepository.deleteProduct(bucketId, productId)
         .then(bucketRepository.getUserIdByBucketId(bucketId))
-        .flatMap(userId -> redisTemplate.opsForValue().delete(userId.toString()))
+        .flatMap(cacheService::delete)
         .then();
   }
 
@@ -83,7 +71,7 @@ public class BucketService {
         .doOnNext(BucketProductAmount::increment)
         .flatMap(bucketRepository::updateProduct)
         .then(bucketRepository.getUserIdByBucketId(bucketId))
-        .flatMap(userId -> redisTemplate.opsForValue().delete(userId.toString()))
+        .flatMap(cacheService::delete)
         .then();
   }
 
@@ -94,7 +82,7 @@ public class BucketService {
         .doOnNext(BucketProductAmount::decrement)
         .flatMap(bucketRepository::updateProduct)
         .then(bucketRepository.getUserIdByBucketId(bucketId))
-        .flatMap(userId -> redisTemplate.opsForValue().delete(userId.toString()))
+        .flatMap(cacheService::delete)
         .then();
   }
 
@@ -102,7 +90,7 @@ public class BucketService {
   public Mono<Void> clear(@NonNull Long bucketId) {
     return bucketRepository.deleteProductsByBucketId(bucketId)
         .then(bucketRepository.getUserIdByBucketId(bucketId))
-        .flatMap(userId -> redisTemplate.opsForValue().delete(userId.toString()))
+        .flatMap(cacheService::delete)
         .then();
   }
 }

@@ -12,7 +12,7 @@ import ru.girqa.paymentservice.model.Payment;
 @Service
 public class PaymentService {
 
-  private static final BigDecimal DEFAULT_AMOUNT = new BigDecimal("100000");
+  public static final BigDecimal DEFAULT_AMOUNT = new BigDecimal("100000");
 
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
   private final Queue<Payment> paymentRepository = new ConcurrentLinkedQueue<>();
