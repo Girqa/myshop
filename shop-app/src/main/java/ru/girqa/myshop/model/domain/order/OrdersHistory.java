@@ -1,4 +1,4 @@
-package ru.girqa.myshop.model.domain;
+package ru.girqa.myshop.model.domain.order;
 
 import java.math.BigDecimal;
 import java.util.List;

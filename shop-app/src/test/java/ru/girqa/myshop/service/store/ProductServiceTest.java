@@ -22,9 +22,9 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import ru.girqa.myshop.exception.ShopEntityNotFoundException;
 import ru.girqa.myshop.model.domain.Image;
-import ru.girqa.myshop.model.domain.Product;
-import ru.girqa.myshop.model.domain.ProductPageRequest;
-import ru.girqa.myshop.model.domain.ProductsPage;
+import ru.girqa.myshop.model.domain.product.Product;
+import ru.girqa.myshop.model.domain.product.ProductPageRequest;
+import ru.girqa.myshop.model.domain.product.ProductsPage;
 import ru.girqa.myshop.repository.ImageRepository;
 import ru.girqa.myshop.repository.ProductRepository;
 

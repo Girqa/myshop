@@ -16,15 +16,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient.BodyContentSpec;
 import reactor.core.publisher.Mono;
 import ru.girqa.myshop.common.BaseIntegrationTest;
 import ru.girqa.myshop.model.domain.Image;
-import ru.girqa.myshop.model.domain.Order;
-import ru.girqa.myshop.model.domain.OrderProduct;
-import ru.girqa.myshop.model.domain.OrdersHistory;
+import ru.girqa.myshop.model.domain.order.Order;
+import ru.girqa.myshop.model.domain.order.OrderProduct;
+import ru.girqa.myshop.model.domain.order.OrdersHistory;
 import ru.girqa.myshop.service.OrderFacadeService;
 
 class OrderControllerTest extends BaseIntegrationTest {
@@ -41,6 +42,7 @@ class OrderControllerTest extends BaseIntegrationTest {
   }
 
   @Test
+  @WithMockUser
   @SneakyThrows
   void shouldCreateOrder() {
     final Order createdOrder = new Order();
@@ -56,6 +58,7 @@ class OrderControllerTest extends BaseIntegrationTest {
   }
 
   @Test
+  @WithMockUser
   @SneakyThrows
   void shouldGetOrderView() {
     final Order order = getOrder();
@@ -78,6 +81,7 @@ class OrderControllerTest extends BaseIntegrationTest {
   }
 
   @Test
+  @WithMockUser
   @SneakyThrows
   void shouldGetAllOrdersView() {
     List<Order> orders = IntStream.range(0, 5)

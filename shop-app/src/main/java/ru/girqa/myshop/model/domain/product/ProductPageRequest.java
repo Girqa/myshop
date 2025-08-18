@@ -1,4 +1,4 @@
-package ru.girqa.myshop.model.domain;
+package ru.girqa.myshop.model.domain.product;
 
 import java.util.ArrayList;
 import java.util.List;

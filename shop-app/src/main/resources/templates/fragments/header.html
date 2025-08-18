@@ -7,13 +7,30 @@
 <header th:fragment="header"
         class="container-lg d-flex justify-content-lg-between align-items-center sticky-lg-top"
         style="background-color: #f5f5f5; height: 50px">
+
   <div class="block">
     <a th:href="@{/}">
       <button class="btn btn-primary">Главная</button>
     </a>
   </div>
 
-  <div class="block">
+  <div class="block" th:if="${#lists.contains(authorities, 'ROLE_USER') or #lists.contains(authorities, 'ROLE_ADMIN')}">
+    <a th:href="@{/logout}">
+      <button class="btn btn-primary">Выйти</button>
+    </a>
+  </div>
+
+  <div class="block" th:if="${#lists.contains(authorities, 'ROLE_USER') or #lists.contains(authorities, 'ROLE_ADMIN')}">
+    <span th:text="${username}"></span>
+  </div>
+
+  <div class="block" th:if="${#lists.contains(authorities, 'ROLE_ANONYMOUS')}">
+    <a th:href="@{/login}">
+      <button class="btn btn-primary">Войти</button>
+    </a>
+  </div>
+
+  <div class="block" th:if="${#lists.contains(authorities, 'ROLE_USER')}">
     <div class="d-flex justify-content-end">
 
       <div class="block me-3" id="balance-placeholder">
@@ -35,7 +52,7 @@
       </div>
     </div>
   </div>
-  <script>
+  <script th:if="${#lists.contains(authorities, 'ROLE_USER')}">
     let balanceWidget = document.querySelector('#balance-placeholder .btn');
     let IS_BALANCE_AVAILABLE = false;
 

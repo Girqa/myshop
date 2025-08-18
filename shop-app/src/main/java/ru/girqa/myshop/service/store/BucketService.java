@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 import ru.girqa.myshop.exception.ShopEntityNotFoundException;
-import ru.girqa.myshop.model.domain.Bucket;
-import ru.girqa.myshop.model.domain.BucketProductAmount;
+import ru.girqa.myshop.model.domain.bucket.Bucket;
+import ru.girqa.myshop.model.domain.bucket.BucketProductAmount;
 import ru.girqa.myshop.repository.BucketRepository;
 
 @Service
@@ -21,19 +21,20 @@ public class BucketService {
   @Transactional
   public Mono<Bucket> findFilledOrCreateByUserId(@NonNull Long userId) {
     return cacheService.getByUserId(userId)
-        .switchIfEmpty(bucketRepository.findWithFilledProductsByUserId(userId)
-            .switchIfEmpty(create(userId))
-            .flatMap(cacheService::save)
+        .doOnNext(cache -> System.out.println("Cache: " + cache))
+        .switchIfEmpty(Mono.defer(() -> bucketRepository.findWithFilledProductsByUserId(userId)
+            .switchIfEmpty(Mono.defer(() -> create(userId)))
+            .flatMap(cacheService::save))
+            .doOnNext(saved -> System.out.println("Saved: " + saved))
         );
   }
 
   @Transactional(readOnly = true)
   public Mono<Bucket> findFilledByUserId(@NonNull Long userId) {
     return cacheService.getByUserId(userId)
-        .switchIfEmpty(
-            bucketRepository.findWithFilledProductsByUserId(userId)
-                .switchIfEmpty(Mono.error(ShopEntityNotFoundException::new))
-                .flatMap(cacheService::save)
+        .switchIfEmpty(Mono.defer(() -> bucketRepository.findWithFilledProductsByUserId(userId)
+            .switchIfEmpty(Mono.error(ShopEntityNotFoundException::new))
+            .flatMap(cacheService::save))
         );
   }
 
@@ -41,7 +42,8 @@ public class BucketService {
   public Mono<Bucket> create(@NonNull Long userId) {
     return bucketRepository.save(Bucket.builder()
         .userId(userId)
-        .build());
+        .build())
+        .doOnNext(bucket -> System.out.println("Saved: " + bucket));
   }
 
   @Transactional

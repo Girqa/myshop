@@ -14,16 +14,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 import ru.girqa.myshop.common.BaseIntegrationTest;
-import ru.girqa.myshop.model.domain.Bucket;
-import ru.girqa.myshop.model.domain.BucketProductAmount;
 import ru.girqa.myshop.model.domain.Image;
-import ru.girqa.myshop.model.domain.Product;
-import ru.girqa.myshop.model.domain.ProductPageRequest;
-import ru.girqa.myshop.model.domain.ProductsPage;
+import ru.girqa.myshop.model.domain.bucket.Bucket;
+import ru.girqa.myshop.model.domain.bucket.BucketProductAmount;
+import ru.girqa.myshop.model.domain.product.Product;
+import ru.girqa.myshop.model.domain.product.ProductPageRequest;
+import ru.girqa.myshop.model.domain.product.ProductsPage;
 import ru.girqa.myshop.model.domain.sort.ProductSort;
 import ru.girqa.myshop.model.domain.sort.ProductSortParam;
 import ru.girqa.myshop.model.domain.sort.SortDirection;
@@ -118,6 +119,7 @@ class MainPageHandlerTest extends BaseIntegrationTest {
 
   @Test
   @SneakyThrows
+  @WithUserDetails(value = USER_USERNAME, userDetailsServiceBeanName = "inMemoryUserDetailsService")
   void shouldReturnMainPage() {
     when(productServiceMock.findAllForPage(any()))
         .thenReturn(Mono.just(page));

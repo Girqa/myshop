@@ -16,16 +16,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
-import org.springframework.test.annotation.DirtiesContext;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 import ru.girqa.myshop.common.BaseIntegrationTest;
-import ru.girqa.myshop.model.domain.Bucket;
-import ru.girqa.myshop.model.domain.BucketProductAmount;
 import ru.girqa.myshop.model.domain.Image;
-import ru.girqa.myshop.model.domain.Product;
+import ru.girqa.myshop.model.domain.bucket.Bucket;
+import ru.girqa.myshop.model.domain.bucket.BucketProductAmount;
+import ru.girqa.myshop.model.domain.product.Product;
 
-@DirtiesContext
 class BucketRepositoryTest extends BaseIntegrationTest {
 
   @Autowired
@@ -251,7 +249,7 @@ class BucketRepositoryTest extends BaseIntegrationTest {
 
       StepVerifier.create(bucketRepository.findWithFilledProductsByUserId(bucket.getUserId()))
           .assertNext(found -> assertAll(
-              () ->  assertTrue(found.getProducts().isEmpty()),
+              () -> assertTrue(found.getProducts().isEmpty()),
               () -> assertEquals(BigDecimal.ZERO, found.getTotalPrice())
           )).verifyComplete();
     }

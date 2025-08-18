@@ -14,12 +14,14 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import ru.girqa.myshop.common.BaseIntegrationTest;
 import ru.girqa.myshop.model.domain.Image;
-import ru.girqa.myshop.model.domain.Product;
+import ru.girqa.myshop.model.domain.product.Product;
 import ru.girqa.myshop.service.store.BucketService;
 import ru.girqa.myshop.service.store.ProductService;
 
@@ -27,6 +29,7 @@ class ProductHandlerTest extends BaseIntegrationTest {
 
   @MockitoSpyBean
   BucketService bucketServiceSpy;
+
   @MockitoSpyBean
   ProductService productServiceSpy;
 
@@ -38,8 +41,8 @@ class ProductHandlerTest extends BaseIntegrationTest {
     Mockito.reset(bucketServiceSpy, productServiceSpy);
   }
 
-
   @Test
+  @WithUserDetails(value = ADMIN_USERNAME, userDetailsServiceBeanName = "inMemoryUserDetailsService")
   void shouldGetProduct() {
     Product givenProduct = getProduct();
     final Product dbProduct = productServiceSpy.save(givenProduct).block();
@@ -48,7 +51,6 @@ class ProductHandlerTest extends BaseIntegrationTest {
     webTestClient.get()
         .uri(uriBuilder -> uriBuilder
             .path("/product/%d".formatted(dbProduct.getId()))
-            .queryParam("user_id", "11")
             .build()
         )
         .accept(MediaType.TEXT_HTML)
@@ -67,10 +69,11 @@ class ProductHandlerTest extends BaseIntegrationTest {
     verify(productServiceSpy, times(1))
         .findById(dbProduct.getId());
     verify(bucketServiceSpy, times(1))
-        .findFilledOrCreateByUserId(11L);
+        .findFilledOrCreateByUserId(ADMIN_ID);
   }
 
   @Test
+  @WithMockUser(roles = "ADMIN")
   void shouldCreateProduct() {
     Product givenProduct = getProduct();
 
@@ -86,7 +89,7 @@ class ProductHandlerTest extends BaseIntegrationTest {
         .body(BodyInserters.fromMultipartData(bodyBuilder.build()))
         .exchange()
         .expectStatus().isFound()
-        .expectHeader().valueMatches("Location", "/product/[0-9]");
+        .expectHeader().valueMatches("Location", "/product/[0-9]+");
 
     verify(productServiceSpy, times(1))
         .save(any());

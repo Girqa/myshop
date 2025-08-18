@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,8 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import ru.girqa.myshop.exception.ShopEntityNotFoundException;
-import ru.girqa.myshop.model.domain.Bucket;
-import ru.girqa.myshop.model.domain.BucketProductAmount;
+import ru.girqa.myshop.model.domain.bucket.Bucket;
+import ru.girqa.myshop.model.domain.bucket.BucketProductAmount;
 import ru.girqa.myshop.repository.BucketRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -67,8 +68,6 @@ class BucketServiceTest {
     void shouldFindByUserIdInDb() {
       when(bucketRepositoryMock.findWithFilledProductsByUserId(bucket.getUserId()))
           .thenReturn(Mono.just(bucket));
-      when(bucketRepositoryMock.save(any()))
-          .thenReturn(Mono.empty());
       when(bucketCacheServiceMock.getByUserId(bucket.getUserId()))
           .thenReturn(Mono.empty());
       when(bucketCacheServiceMock.save(any()))
@@ -80,7 +79,7 @@ class BucketServiceTest {
 
       verify(bucketRepositoryMock, times(1))
           .findWithFilledProductsByUserId(anyLong());
-      verify(bucketRepositoryMock, times(1))
+      verify(bucketRepositoryMock, never())
           .save(any());
     }
 

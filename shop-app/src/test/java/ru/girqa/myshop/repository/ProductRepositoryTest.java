@@ -15,15 +15,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
-import org.springframework.test.annotation.DirtiesContext;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 import ru.girqa.myshop.common.BaseIntegrationTest;
 import ru.girqa.myshop.model.domain.Image;
-import ru.girqa.myshop.model.domain.Product;
-import ru.girqa.myshop.model.domain.ProductPageRequest;
+import ru.girqa.myshop.model.domain.product.Product;
+import ru.girqa.myshop.model.domain.product.ProductPageRequest;
 
-@DirtiesContext
 class ProductRepositoryTest extends BaseIntegrationTest {
 
   @Autowired

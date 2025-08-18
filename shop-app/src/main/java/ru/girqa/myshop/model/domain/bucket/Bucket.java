@@ -1,4 +1,4 @@
-package ru.girqa.myshop.model.domain;
+package ru.girqa.myshop.model.domain.bucket;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,10 +15,11 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import ru.girqa.myshop.model.domain.BaseEntity;
 
 @Table("buckets")
 @SuperBuilder(toBuilder = true)
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class Bucket extends BaseEntity {

@@ -26,7 +26,9 @@ public class PaymentController implements DefaultPaymentApi {
             userId, dto.getOrderId(), dto.getAmount()
         ))
         .then(Mono.just(ResponseEntity.ok("OK")))
-        .onErrorReturn(ResponseEntity.badRequest().body("Can not pay"));
+        .onErrorResume(ex -> Mono.fromCallable(
+            () -> ResponseEntity.badRequest().body("Can not pay: " + ex.getMessage())
+        ));
   }
 
   @Override

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 
@@ -11,6 +12,7 @@ import org.springframework.data.annotation.Id;
 @Setter
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
+@ToString
 public abstract class BaseEntity implements Serializable {
 
   @Id

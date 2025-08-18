@@ -94,7 +94,7 @@
     </form>
   </div>
 
-  <div class="block">
+  <div class="block" th:if="${#lists.contains(authorities, 'ROLE_ADMIN')}">
     <button type="button"
             class="btn btn-primary"
             data-bs-toggle="modal"

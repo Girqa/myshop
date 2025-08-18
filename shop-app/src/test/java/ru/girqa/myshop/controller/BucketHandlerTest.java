@@ -11,14 +11,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 import ru.girqa.myshop.common.BaseIntegrationTest;
-import ru.girqa.myshop.model.domain.Bucket;
-import ru.girqa.myshop.model.domain.BucketProductAmount;
 import ru.girqa.myshop.model.domain.Image;
-import ru.girqa.myshop.model.domain.Product;
+import ru.girqa.myshop.model.domain.bucket.Bucket;
+import ru.girqa.myshop.model.domain.bucket.BucketProductAmount;
+import ru.girqa.myshop.model.domain.product.Product;
 import ru.girqa.myshop.service.store.BucketService;
 
 
@@ -36,6 +38,7 @@ class BucketHandlerTest extends BaseIntegrationTest {
   }
 
   @Test
+  @WithUserDetails(value = USER_USERNAME, userDetailsServiceBeanName = "inMemoryUserDetailsService")
   void shouldGetBucketPage() {
     Bucket bucket = getBucket();
     when(bucketServiceMock.findFilledOrCreateByUserId(bucket.getUserId()))
@@ -57,7 +60,9 @@ class BucketHandlerTest extends BaseIntegrationTest {
   }
 
   @Test
+  @WithMockUser
   void shouldAddProduct() {
+
     final Long BUCKET_ID = 9L, PRODUCT_ID = 21L;
     when(bucketServiceMock.addProduct(BUCKET_ID, PRODUCT_ID))
         .thenReturn(Mono.empty());
@@ -72,6 +77,7 @@ class BucketHandlerTest extends BaseIntegrationTest {
   }
 
   @Test
+  @WithMockUser
   void shouldRemoveProduct() {
     final Long BUCKET_ID = 9L, PRODUCT_ID = 21L;
     when(bucketServiceMock.removeProduct(BUCKET_ID, PRODUCT_ID))
@@ -87,6 +93,7 @@ class BucketHandlerTest extends BaseIntegrationTest {
   }
 
   @Test
+  @WithMockUser
   void shouldIncrementProduct() {
     final Long BUCKET_ID = 9L, PRODUCT_ID = 21L;
     when(bucketServiceMock.incrementProductCount(BUCKET_ID, PRODUCT_ID))
@@ -105,6 +112,7 @@ class BucketHandlerTest extends BaseIntegrationTest {
   }
 
   @Test
+  @WithMockUser
   void shouldDecrementProduct() {
     final Long BUCKET_ID = 9L, PRODUCT_ID = 21L;
     when(bucketServiceMock.decrementProductCount(BUCKET_ID, PRODUCT_ID))
@@ -125,7 +133,7 @@ class BucketHandlerTest extends BaseIntegrationTest {
   private Bucket getBucket() {
     return Bucket.builder()
         .id(5L)
-        .userId(14L)
+        .userId(USER_ID)
         .products(List.of(
             BucketProductAmount.builder()
                 .amount(3)

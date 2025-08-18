@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.girqa.myshop.common.BaseIntegrationTest;
-import ru.girqa.myshop.model.domain.Bucket;
+import ru.girqa.myshop.model.domain.bucket.Bucket;
 
 class BucketCacheServiceTest extends BaseIntegrationTest {
 
@@ -17,7 +17,6 @@ class BucketCacheServiceTest extends BaseIntegrationTest {
 
   @Test
   void shouldSaveBucket() {
-    final Long USER_ID = 11L;
     final Bucket bucket = Bucket.builder()
         .userId(USER_ID)
         .build();
@@ -35,7 +34,6 @@ class BucketCacheServiceTest extends BaseIntegrationTest {
 
   @Test
   void shouldDeleteBucket() {
-    final Long USER_ID = 32L;
     final Bucket bucket = Bucket.builder()
         .userId(USER_ID)
         .build();

@@ -16,9 +16,9 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
-import ru.girqa.myshop.model.domain.Bucket;
-import ru.girqa.myshop.model.domain.BucketProductAmount;
-import ru.girqa.myshop.model.domain.Product;
+import ru.girqa.myshop.model.domain.bucket.Bucket;
+import ru.girqa.myshop.model.domain.bucket.BucketProductAmount;
+import ru.girqa.myshop.model.domain.product.Product;
 
 @Repository
 @RequiredArgsConstructor

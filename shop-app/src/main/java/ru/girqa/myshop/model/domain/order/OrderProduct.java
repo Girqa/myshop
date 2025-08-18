@@ -1,4 +1,4 @@
-package ru.girqa.myshop.model.domain;
+package ru.girqa.myshop.model.domain.order;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -13,6 +13,7 @@ import lombok.ToString;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.InsertOnlyProperty;
 import org.springframework.data.relational.core.mapping.Table;
+import ru.girqa.myshop.model.domain.BaseEntity;
 
 @Table("orders_products")
 @Getter

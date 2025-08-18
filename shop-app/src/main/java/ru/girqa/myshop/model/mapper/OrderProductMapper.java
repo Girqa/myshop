@@ -4,8 +4,8 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
-import ru.girqa.myshop.model.domain.BucketProductAmount;
-import ru.girqa.myshop.model.domain.OrderProduct;
+import ru.girqa.myshop.model.domain.bucket.BucketProductAmount;
+import ru.girqa.myshop.model.domain.order.OrderProduct;
 
 @Mapper(componentModel = ComponentModel.SPRING)
 public interface OrderProductMapper {

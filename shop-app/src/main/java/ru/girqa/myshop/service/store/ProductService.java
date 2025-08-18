@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 import ru.girqa.myshop.exception.ShopEntityNotFoundException;
-import ru.girqa.myshop.model.domain.Product;
-import ru.girqa.myshop.model.domain.ProductPageRequest;
-import ru.girqa.myshop.model.domain.ProductsPage;
+import ru.girqa.myshop.model.domain.product.Product;
+import ru.girqa.myshop.model.domain.product.ProductPageRequest;
+import ru.girqa.myshop.model.domain.product.ProductsPage;
 import ru.girqa.myshop.repository.ImageRepository;
 import ru.girqa.myshop.repository.ProductRepository;
 

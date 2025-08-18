@@ -11,9 +11,9 @@ import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.r2dbc.core.DatabaseClient.GenericExecuteSpec;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
-import ru.girqa.myshop.model.domain.Product;
-import ru.girqa.myshop.model.domain.ProductPageRequest;
-import ru.girqa.myshop.model.domain.ProductsPage;
+import ru.girqa.myshop.model.domain.product.Product;
+import ru.girqa.myshop.model.domain.product.ProductPageRequest;
+import ru.girqa.myshop.model.domain.product.ProductsPage;
 
 @Repository
 @RequiredArgsConstructor

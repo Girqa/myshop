@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
 import org.mapstruct.Named;
-import ru.girqa.myshop.model.domain.ProductPageRequest;
+import ru.girqa.myshop.model.domain.product.ProductPageRequest;
 import ru.girqa.myshop.model.domain.sort.ProductSort;
 import ru.girqa.myshop.model.domain.sort.ProductSortParam;
 import ru.girqa.myshop.model.dto.product.ProductPageRequestDto;

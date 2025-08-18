@@ -30,8 +30,11 @@
 
     </div>
 
-    <div th:replace="~{fragments/product-footer :: productFooter(${product.id()}, ${bucketId}, ${product.countInBucket()})}"></div>
   </article>
+
+  <th:block th:if="${#lists.contains(authorities, 'ROLE_USER')}">
+    <div th:replace="~{fragments/product-footer :: productFooter(${product.id()}, ${bucketId}, ${product.countInBucket()})}"></div>
+  </th:block>
 </div>
 
 </body>

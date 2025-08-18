@@ -1,4 +1,4 @@
-package ru.girqa.myshop.model.domain;
+package ru.girqa.myshop.model.domain.order;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,6 +15,7 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.InsertOnlyProperty;
 import org.springframework.data.relational.core.mapping.Table;
+import ru.girqa.myshop.model.domain.BaseEntity;
 
 @Table("orders")
 @Getter
