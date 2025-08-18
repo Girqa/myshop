@@ -30,8 +30,7 @@ public class OrderHandler {
     Mono<Long> userIdMono = ReactiveSecurityContextHolder.getContext()
         .map(ctx -> ctx.getAuthentication().getPrincipal())
         .cast(User.class)
-        .map(User::getId)
-        .onErrorReturn(1L);
+        .map(User::getId);
 
     return userIdMono.flatMap(orderFacadeService::createOrder)
         .map(Order::getId)
@@ -65,7 +64,7 @@ public class OrderHandler {
         )));
   }
 
-  public Mono<ServerResponse> getAllOrders(ServerRequest request) {
+  public Mono<ServerResponse> getAllOrders(ServerRequest ignored) {
     Mono<List<String>> authorities = ReactiveSecurityContextHolder.getContext()
         .map(SecurityContext::getAuthentication)
         .map(authentication -> authentication.getAuthorities().stream()
