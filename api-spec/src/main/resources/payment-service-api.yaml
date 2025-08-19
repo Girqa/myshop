@@ -19,6 +19,9 @@ paths:
       summary: Метод получения баланса по счету
       parameters:
         - $ref: '#/components/parameters/UserId'
+      security:
+        - oauth:
+          - payment
       responses:
         '200':
           description: Успешный ответ
@@ -34,6 +37,9 @@ paths:
       summary: Метод осуществления оплаты товаров
       parameters:
         - $ref: '#/components/parameters/UserId'
+      security:
+        - oauth:
+            - payment
       requestBody:
         content:
           application/json:
@@ -93,3 +99,12 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/UserId'
+
+  securitySchemes:
+    oauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: http://localhost:8082/oauth/2/token
+          scopes:
+            payment: Get balance and make payment

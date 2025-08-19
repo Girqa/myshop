@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient.BodyContentSpec;
@@ -42,8 +43,8 @@ class OrderControllerTest extends BaseIntegrationTest {
   }
 
   @Test
-  @WithMockUser
   @SneakyThrows
+  @WithUserDetails(value = USER_USERNAME, userDetailsServiceBeanName = "inMemoryUserDetailsService")
   void shouldCreateOrder() {
     final Order createdOrder = new Order();
     createdOrder.setId(5L);

@@ -11,6 +11,8 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.PostgreSQLContainer;
 import ru.girqa.myshop.common.BaseIntegrationTest.TestSecurityConfiguration;
 import ru.girqa.myshop.model.domain.security.User;
@@ -32,6 +34,10 @@ public class BaseIntegrationTest {
 
   @Autowired
   protected BucketCacheService bucketCacheService;
+
+  // To mock oauth security requests
+  @MockitoBean
+  ReactiveClientRegistrationRepository reactiveClientRegistrationRepositoryMock;
 
   @ServiceConnection
   static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>(

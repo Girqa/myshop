@@ -2,6 +2,7 @@ package ru.girqa.paymentservice.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -20,6 +21,7 @@ public class PaymentController implements DefaultPaymentApi {
   }
 
   @Override
+  @PreAuthorize("hasAuthority('SCOPE_PAYMENT')")
   public Mono<ResponseEntity<String>> doPayment(Long userId, Mono<PaymentDto> paymentDto,
       ServerWebExchange exchange) {
     return paymentDto.flatMap(dto -> paymentService.doPayment(
@@ -32,6 +34,7 @@ public class PaymentController implements DefaultPaymentApi {
   }
 
   @Override
+  @PreAuthorize("hasAuthority('SCOPE_PAYMENT')")
   public Mono<ResponseEntity<BalanceDto>> getUserBalance(Long userId,
       ServerWebExchange exchange) {
     return paymentService.getBalance(userId)

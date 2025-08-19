@@ -37,7 +37,8 @@ public class MainPageHandler {
     Mono<Long> userIdMono = ReactiveSecurityContextHolder.getContext()
         .map(ctx -> ctx.getAuthentication().getPrincipal())
         .cast(User.class)
-        .map(User::getId);
+        .map(User::getId)
+        .onErrorReturn(-1L);
 
     Mono<ProductPageRequestDto> pageRequestDto = request.bind(ProductPageRequestDto.class);
 

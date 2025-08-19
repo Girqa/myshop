@@ -1,13 +1,16 @@
 package ru.girqa.paymentservice.controller;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
 
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.webjars.NotFoundException;
@@ -16,7 +19,8 @@ import ru.girqa.payment.domain.BalanceDto;
 import ru.girqa.payment.domain.PaymentDto;
 import ru.girqa.paymentservice.service.PaymentService;
 
-@WebFluxTest
+@SpringBootTest
+@AutoConfigureWebTestClient
 class PaymentControllerTest {
 
   @Autowired
@@ -31,7 +35,9 @@ class PaymentControllerTest {
     Long USER_ID = 212L;
     when(paymentServiceMock.getBalance(USER_ID)).thenReturn(Mono.just(BALANCE));
 
-    webTestClient.get()
+    webTestClient
+        .mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("SCOPE_PAYMENT")))
+        .get()
         .uri("/api/v1/account/{userId}/balance", USER_ID)
         .accept(MediaType.APPLICATION_JSON)
         .exchange()
@@ -46,7 +52,9 @@ class PaymentControllerTest {
     when(paymentServiceMock.getBalance(USER_ID))
         .thenReturn(Mono.error(new NotFoundException("User not found")));
 
-    webTestClient.get()
+    webTestClient
+        .mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("SCOPE_PAYMENT")))
+        .get()
         .uri("/api/v1/account/{userId}/balance", USER_ID)
         .accept(MediaType.APPLICATION_JSON)
         .exchange()
@@ -61,7 +69,9 @@ class PaymentControllerTest {
         USER_ID, PAYMENT_REQUEST.getOrderId(), PAYMENT_REQUEST.getAmount())
     ).thenReturn(Mono.empty());
 
-    webTestClient.post()
+    webTestClient
+        .mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("SCOPE_PAYMENT")))
+        .post()
         .uri("/api/v1/account/{userId}/payment", USER_ID)
         .bodyValue(PAYMENT_REQUEST)
         .accept(MediaType.TEXT_PLAIN)
@@ -80,7 +90,9 @@ class PaymentControllerTest {
         USER_ID, PAYMENT_REQUEST.getOrderId(), PAYMENT_REQUEST.getAmount())
     ).thenReturn(Mono.error(new NotFoundException("User not found")));
 
-    webTestClient.post()
+    webTestClient
+        .mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("SCOPE_PAYMENT")))
+        .post()
         .uri("/api/v1/account/{userId}/payment", USER_ID)
         .bodyValue(PAYMENT_REQUEST)
         .accept(MediaType.TEXT_PLAIN)
@@ -88,5 +100,4 @@ class PaymentControllerTest {
         .exchange()
         .expectStatus().isBadRequest();
   }
-
 }

@@ -21,11 +21,9 @@ public class BucketService {
   @Transactional
   public Mono<Bucket> findFilledOrCreateByUserId(@NonNull Long userId) {
     return cacheService.getByUserId(userId)
-        .doOnNext(cache -> System.out.println("Cache: " + cache))
         .switchIfEmpty(Mono.defer(() -> bucketRepository.findWithFilledProductsByUserId(userId)
             .switchIfEmpty(Mono.defer(() -> create(userId)))
             .flatMap(cacheService::save))
-            .doOnNext(saved -> System.out.println("Saved: " + saved))
         );
   }
 
@@ -42,8 +40,7 @@ public class BucketService {
   public Mono<Bucket> create(@NonNull Long userId) {
     return bucketRepository.save(Bucket.builder()
         .userId(userId)
-        .build())
-        .doOnNext(bucket -> System.out.println("Saved: " + bucket));
+        .build());
   }
 
   @Transactional

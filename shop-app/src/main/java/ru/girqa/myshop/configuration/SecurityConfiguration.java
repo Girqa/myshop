@@ -16,6 +16,11 @@ import org.springframework.security.core.session.ReactiveSessionRegistry;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.SessionLimit;
 import ru.girqa.myshop.controller.exception.GlobalExceptionHandler;
@@ -72,6 +77,23 @@ public class SecurityConfiguration {
         reactiveUserDetailsService);
 
     manager.setPasswordEncoder(passwordEncoder());
+    return manager;
+  }
+
+  @Bean
+  public ReactiveOAuth2AuthorizedClientManager authorizedClientManager(
+      ReactiveClientRegistrationRepository clientRegistrationRepository,
+      ReactiveOAuth2AuthorizedClientService authorizedClientService
+  ) {
+    var manager = new AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(
+        clientRegistrationRepository, authorizedClientService
+    );
+
+    manager.setAuthorizedClientProvider(ReactiveOAuth2AuthorizedClientProviderBuilder.builder()
+        .clientCredentials()
+        .build()
+    );
+
     return manager;
   }
 
